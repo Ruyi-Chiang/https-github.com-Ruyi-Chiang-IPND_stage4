@@ -3,21 +3,28 @@
 {% block content %}
 
 <!-- Study Note Template -->
+{% for concept in main_concept %}
 <div class="container">
     <div class="row">
       <div class="col s12">
-          <div class="divider"></div>
             <div class="section">
-                <h5>Understanding of Servers</h5>
-                <p>Summary of the concept</p>
+                <h5>{{concept[0]}}</h5>
+                <p>{{concept[1]}}</p>
             </div>
       </div>
+      <ul>
+      {% for sub_concept in concept[2] %}
+        <li>{{sub_concept}}</li>
+      <!--
       <div class="col s6">Sub-concept 1</div>
       <div class="col s6">Sub-concept 2</div>
+      -->
+      {% endfor %}
+      </ul>
     </div>
     <div class="divider"></div>
 </div>
-
+{% endfor %}
 
 <!-- Form -->
 <div class="container">

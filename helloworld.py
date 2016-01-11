@@ -1,7 +1,7 @@
 import os
-
 import webapp2
 import jinja2
+
 
 # Set up jinja environment
 # os.path.dirname(__file__) means the current file
@@ -9,10 +9,9 @@ template_dir = os.path.join(os.path.dirname(__file__), "templates")
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
                                autoescape=True)
 
-# HTML of the comment form
-form = '''
-
-'''
+# data
+# make a basic Concept class
+Concept_list = [["Understanding of Servers","Summary of concept1", ["sub_concept", "sub_concept", "sub_concept"]],["Importantance of Validating Input", "Summary of concept2", ["sub_concept", "sub_concept", "sub_concept"]],["HTML Templates and Abstraction", "Summary of concept3", ["sub_concept", "sub_concept"]]]
 
 
 # Comment validation function
@@ -38,16 +37,13 @@ class Handler(webapp2.RequestHandler):
 
 # Main page Handler
 class MainPage(Handler):
-    def write_form(self, error="", comment=""):
-        self.write(form % {"comment": comment, "error": error})
-
     def get(self):
         # self.response.headers['Content-Type'] = 'text/plain'
         # self.response.out.write(form)
         # self.write_form()
         user_input = self.request.get("comment")
-        self.render("index.html", error="", comment=user_input)
-
+        self.render("index.html", error="", comment=user_input, main_concept=Concept_list)
+        
     def post(self):
         user_input = self.request.get("comment")
         if valid_comment(user_input):

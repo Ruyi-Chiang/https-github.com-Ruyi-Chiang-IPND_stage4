@@ -11,7 +11,14 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
 
 # data
 # make a basic Concept class
-Concept_list = [["Understanding of Servers","Summary of concept1", ["sub_concept", "sub_concept", "sub_concept"]],["Importantance of Validating Input", "Summary of concept2", ["sub_concept", "sub_concept", "sub_concept"]],["HTML Templates and Abstraction", "Summary of concept3", ["sub_concept", "sub_concept"]]]
+Concept_list = [["Understanding of Servers",
+                 '''
+                 A server is a computer that interacts with a request we make to the computer. 
+                 For example, whenever we type in "http://www.google.com", we are sending a request to Google's servers to return a website.
+                 ''',
+                 ["sub_concept", "sub_concept", "sub_concept"]],
+                ["Importantance of Validating Input", "Summary of concept2", ["sub_concept", "sub_concept", "sub_concept"]],
+                ["HTML Templates and Abstraction", "Summary of concept3", ["sub_concept", "sub_concept"]]]
 
 
 # Comment validation function

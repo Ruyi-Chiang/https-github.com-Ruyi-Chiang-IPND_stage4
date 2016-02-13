@@ -2,41 +2,27 @@ import os
 import webapp2
 import jinja2
 import urllib
+import cgi
 
-
-# Set Google App Engine Datastore
 from google.appengine.ext import ndb
 
+
 # Construct a datastore key and model
-def guestbook_key():
-  return ndb.Key('Guestbook', 'Bottom_book')
-
-class Author(ndb.Model):
-  """Sub model for representing an author."""
-  identity = ndb.StringProperty(indexed= False)
-  email = ndb.StringProperty(indexed= False)
-
 class Comment(ndb.Model):
-  """A main model for representing an individual comment entry"""
-  author = ndb.StructuredProperty(Author)
-  content = ndb.StringProperty(indexed= False)
+  """Models an individual Guestbook entry with content and date."""
+  content = ndb.StringProperty()
   date = ndb.DateTimeProperty(auto_now_add= True)
 
-# Put date into the DataStore
-class Guestbook(webapp2.RequestHandler):
+  @classmethod
+  def query_book(cls, ancestor_key):
+    return cls.query(ancestor=ancestor_key).order(-cls.date)
+
+# Storing data into the DataStore
+class SignGuestbook(webapp2.RequestHandler):
   def post(self):
-    comment = Comment(parent= guestbook_key())
-
-    if users.get_current_user():
-      greeting.author = Author(
-        identity = users.get_current_user().user_id(),
-        email = users.get_current_user().email())
-
-    comment.content = self.request.get('comment')
+    guestbook_name = 'bottom_book'
+    comment = Comment(parent=ndb.Key('Guestbook', guestbook_name), content=self.request.get('comment'))
     comment.put()
-
-    query_params = {'Bottom_book': 'Bottom_book'}
-    self.redirect('/?' + urllib.urlencode(query_params))
 
 # Set up jinja environment
 # os.path.dirname(__file__) means the current file
@@ -58,8 +44,8 @@ Concept_list = [["Understanding of Servers",
 
 # Comment validation function
 def valid_comment(comment):
-    if comment != "Good":
-        return True
+    #if comment != "Good":
+        return False
 
 
 # Handler class to make following webapp2 Handler more neat
@@ -86,16 +72,14 @@ class MainPage(Handler):
         user_input = self.request.get("comment")
         self.render("index.html", error="", comment=user_input, main_concept=Concept_list)
         
-        comment_query = Comment.query(
-          ancestor= guestbook_key()).order(-Comment.date)
-        comments = comment_query.fetch(10)
-
-        self.response.write('It works')
-
         # Display the content of comments
-        for i in range(len(comments)):
-          self.response.write('It works')
-          self.response.write('<br> %s </br>' %i)
+        guestbook_name = 'bottom_book'
+        ancestor_key = ndb.Key('Guestbook', guestbook_name)
+        comments = Comment.query_book(ancestor_key).fetch(10)
+        self.write('It works')
+
+        for comment in comments:
+          self.write('<blockquote>%s</blockquote>' %cgi.escape(comment.content))
     
     def post(self):
         user_input = self.request.get("comment")
@@ -122,7 +106,7 @@ class TestHandler(webapp2.RequestHandler):
         #self.response.out.write(self.request)
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/guestbook', Guestbook),
+                               ('/guestbook', SignGuestbook),
                                ('/thanks', ThanksHandler),
                                ('/testform', TestHandler)],
                               debug=True)

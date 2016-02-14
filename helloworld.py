@@ -21,8 +21,13 @@ class Comment(ndb.Model):
 class SignGuestbook(webapp2.RequestHandler):
   def post(self):
     guestbook_name = 'bottom_book'
-    comment = Comment(parent=ndb.Key('Guestbook', guestbook_name), content=self.request.get('comment'))
+    checked_comment = valid_comment(self.request.get('comment'))
+    comment = Comment(parent=ndb.Key('Guestbook', guestbook_name), content=checked_comment)
     comment.put()
+
+    # Stay in the same page after passing the data
+    query_params = {'Guestbook': guestbook_name}
+    self.redirect('/?' + urllib.urlencode(query_params))
 
 # Set up jinja environment
 # os.path.dirname(__file__) means the current file
@@ -44,8 +49,8 @@ Concept_list = [["Understanding of Servers",
 
 # Comment validation function
 def valid_comment(comment):
-    #if comment != "Good":
-        return False
+    comment = cgi.escape(comment)
+    return comment
 
 
 # Handler class to make following webapp2 Handler more neat
@@ -66,29 +71,27 @@ class Handler(webapp2.RequestHandler):
 # Main page Handler
 class MainPage(Handler):
     def get(self):
-        # self.response.headers['Content-Type'] = 'text/plain'
-        # self.response.out.write(form)
-        # self.write_form()
-        user_input = self.request.get("comment")
-        self.render("index.html", error="", comment=user_input, main_concept=Concept_list)
-        
         # Display the content of comments
         guestbook_name = 'bottom_book'
         ancestor_key = ndb.Key('Guestbook', guestbook_name)
         comments = Comment.query_book(ancestor_key).fetch(10)
-        self.write('It works')
 
-        for comment in comments:
-          self.write('<blockquote>%s</blockquote>' %cgi.escape(comment.content))
-    
+        
+        # self.response.headers['Content-Type'] = 'text/plain'
+        # self.response.out.write(form)
+        # self.write_form()
+        user_input = self.request.get("comment")
+        self.render("index.html", error="", comment=user_input, main_concept=Concept_list, display_comment=comments)
+
     def post(self):
         user_input = self.request.get("comment")
-        if valid_comment(user_input):
-            error_mes = "That's not a valid input."
-            self.render("index.html", error=error_mes, comment=user_input)
-        else:
-            # Redirect users to thanks page
-            self.redirect("/thanks")
+        self.redirect("/thanks")
+        # if valid_comment(user_input):
+        #     error_mes = "That's not a valid input."
+        #     self.render("index.html", error=error_mes, comment=user_input)
+        # else:
+        #     # Redirect users to thanks page
+        #     self.redirect("/thanks")
     
 
 # Thanks page Handler

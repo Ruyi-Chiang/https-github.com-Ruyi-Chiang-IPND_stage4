@@ -7,24 +7,45 @@
 <div class="container">
     <div class="row">
       <div class="col s12">
-            <div class="section">
-                <h5>{{concept[0]}}</h5>
-                <p>{{concept[1]}}</p>
-            </div>
+        <div class="section">
+            <h5>{{concept[0]}}</h5>
+            <p>{{concept[1]}}</p>
+        </div>
+        <ul>
+        {% for sub_concept in concept[2] %}
+          <li>{{sub_concept}}</li>
+        <!--
+        <div class="col s6">Sub-concept 1</div>
+        <div class="col s6">Sub-concept 2</div>
+        -->
+        {% endfor %}
+        </ul>
+        <form>
+          <fieldset>
+            <legend>Share with me your good pieces regarding to this topic</legend>
+            <b>Reference title:</b><br>
+            <input type="text" name={{"reference_title_" + main_concept.index(concept)|string}}>
+            <b>Reference link:</b><br>
+            <input type="text" name={{"reference_link_" + main_concept.index(concept)|string}}>
+            <input type="submit">
+          </fieldset>
+        </form>
       </div>
-      <ul>
-      {% for sub_concept in concept[2] %}
-        <li>{{sub_concept}}</li>
-      <!--
-      <div class="col s6">Sub-concept 1</div>
-      <div class="col s6">Sub-concept 2</div>
-      -->
-      {% endfor %}
-      </ul>
     </div>
     <div class="divider"></div>
 </div>
 {% endfor %}
+
+<!-- Display Comments-->
+<div class="container lime accent-1">
+  <h5>This is the display area</h5>
+  <ol>
+    {% for comment in display_comment %}
+      <li>{{comment.content}} at {{comment.date}}</li>
+    {% endfor %}
+      <li>end</li>
+   </ol>
+</div>
 
 <!-- Form -->
 <div class="container">
@@ -39,5 +60,7 @@
         <input type="submit">
     </form>
 </div>
+
+
 
 {% endblock %}

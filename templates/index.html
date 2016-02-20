@@ -20,13 +20,14 @@
         -->
         {% endfor %}
         </ul>
-        <form>
+        <form action="/postreference" method="post">
           <fieldset>
             <legend>Share with me your good pieces regarding to this topic</legend>
+            <input type="hidden" name="form_name" value={{"reference_" + main_concept.index(concept)|string}}>
             <b>Reference title:</b><br>
-            <input type="text" name={{"reference_title_" + main_concept.index(concept)|string}}>
+            <input type="text" name="reference_title">
             <b>Reference link:</b><br>
-            <input type="text" name={{"reference_link_" + main_concept.index(concept)|string}}>
+            <input type="text" name="reference_link">
             <input type="submit">
           </fieldset>
         </form>

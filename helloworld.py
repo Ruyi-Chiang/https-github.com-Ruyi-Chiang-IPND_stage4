@@ -7,7 +7,12 @@ import cgi
 from google.appengine.ext import ndb
 
 
+# Switch reference key
+def reference_key(reference_name):
+  return ndb.Key('Reference', reference_name)
+
 # Construct a datastore key and model
+# Model for bottom guestbook
 class Comment(ndb.Model):
   """Models an individual Guestbook entry with content and date."""
   content = ndb.StringProperty()
@@ -16,6 +21,13 @@ class Comment(ndb.Model):
   @classmethod
   def query_book(cls, ancestor_key):
     return cls.query(ancestor=ancestor_key).order(-cls.date)
+
+
+class Reference(ndb.Model):
+  """Models reference titles and links"""
+  title = ndb.StringProperty()
+  link = ndb.StringProperty()
+    
 
 # Storing data into the DataStore
 class SignGuestbook(webapp2.RequestHandler):
@@ -27,6 +39,19 @@ class SignGuestbook(webapp2.RequestHandler):
 
     # Stay in the same page after passing the data
     query_params = {'Guestbook': guestbook_name}
+    self.redirect('/?' + urllib.urlencode(query_params))
+
+
+class PostReference(webapp2.RequestHandler):
+  def post(self):
+    reference_id = self.request.get('form_name')
+    reference_title = self.request.get('reference_title')
+    reference_link = valid_comment(self.request.get('reference_link'))
+    reference = Reference(parent=ndb.Key('Reference', reference_id), title=reference_title, link=reference_link)
+    reference.put()
+
+    # # Stay in the same page after passing the data
+    query_params = {'Reference': reference_id}
     self.redirect('/?' + urllib.urlencode(query_params))
 
 # Set up jinja environment
@@ -76,16 +101,24 @@ class MainPage(Handler):
         ancestor_key = ndb.Key('Guestbook', guestbook_name)
         comments = Comment.query_book(ancestor_key).fetch(10)
 
+        # CHECK: how to query Reference data
+        # reference_key = ndb.Key('Reference', 'reference_0')
+        # print '[DEBUG]'
+        # print 'reference_key:', reference_key
+        # reference_query = Reference.query(ancestor=reference_key)
+        # self.write(reference_query)
+        # reference_query.ancestor(Reference)
+        
         
         # self.response.headers['Content-Type'] = 'text/plain'
         # self.response.out.write(form)
         # self.write_form()
-        user_input = self.request.get("comment")
-        self.render("index.html", error="", comment=user_input, main_concept=Concept_list, display_comment=comments)
+        user_input = self.request.get('comment')
+        self.render('index.html', error='', comment=user_input, main_concept=Concept_list, display_comment=comments)
 
     def post(self):
-        user_input = self.request.get("comment")
-        self.redirect("/thanks")
+        user_input = self.request.get('comment')
+        self.redirect('/thanks')
         # if valid_comment(user_input):
         #     error_mes = "That's not a valid input."
         #     self.render("index.html", error=error_mes, comment=user_input)
@@ -109,7 +142,8 @@ class TestHandler(webapp2.RequestHandler):
         #self.response.out.write(self.request)
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/guestbook', SignGuestbook),
+                               ('/guestbook', SignGuestbook), 
+                               ('/postreference',PostReference),
                                ('/thanks', ThanksHandler),
                                ('/testform', TestHandler)],
                               debug=True)

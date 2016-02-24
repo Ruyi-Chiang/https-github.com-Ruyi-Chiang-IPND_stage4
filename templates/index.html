@@ -11,39 +11,11 @@
             <h5>{{concept[0]}}</h5>
             <p>{{concept[1]}}</p>
         </div>
-        <ul>
+        <ol>
         {% for sub_concept in concept[2] %}
           <li>{{sub_concept}}</li>
-        <!--
-        <div class="col s6">Sub-concept 1</div>
-        <div class="col s6">Sub-concept 2</div>
-        -->
         {% endfor %}
-        </ul>
-
-
-        <!-- Display Comments-->
-        <div class="container lime accent-1">
-          <h5>This is the display area</h5>
-          <ol>
-            {% for reference in reference_query %}
-              <li>{{reference.title}} at {{reference.link}}</li>
-            {% endfor %}
-           </ol>
-        </div>
-        
-
-        <form action="/postreference" method="post">
-          <fieldset>
-            <legend>Share with me your good pieces regarding to this topic</legend>
-            <input type="hidden" name="form_name" value={{"reference_" + main_concept.index(concept)|string}}>
-            <b>Reference title:</b><br>
-            <input type="text" name="reference_title">
-            <b>Reference link:</b><br>
-            <input type="text" name="reference_link">
-            <input type="submit">
-          </fieldset>
-        </form>
+        </ol>
       </div>
     </div>
     <div class="divider"></div>
@@ -52,7 +24,7 @@
 
 <!-- Display Comments-->
 <div class="container lime accent-1">
-  <h5>This is the display area</h5>
+  <h5>This is the comment display area</h5>
   <ol>
     {% for comment in display_comment %}
       <li>{{comment.content}} at {{comment.date}}</li>

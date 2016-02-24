@@ -62,14 +62,21 @@ jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
 
 # data
 # make a basic Concept class
-Concept_list = [["Understanding of Servers",
+Concept_list = [ # Concept 1
+                ["Understanding of Servers",
                  '''
                  A server is a computer that interacts with a request we make to the computer. 
                  For example, whenever we type in "http://www.google.com", we are sending a request to Google's servers to return a website.
                  ''',
-                 ["sub_concept", "sub_concept", "sub_concept"]],
-                ["Importantance of Validating Input", "Summary of concept2", ["sub_concept", "sub_concept", "sub_concept"]],
-                ["HTML Templates and Abstraction", "Summary of concept3", ["sub_concept", "sub_concept"]]]
+                 ["GET requests: Parameters will be shown in the URL. Used for fetching data/documents. There is maximum URL length and it is ok to cache but should not change the server.", "POST requests: Parameters is in request body. It is usually used for updating data. There is no max length. "]],
+                 # Concept 2
+                ["Importantance of Validating Input", 
+                 '''
+                 In computer science, data validation is the process of ensuring that a program operates on clean, correct and useful data. Otherwise, the 'bad' data might break your server/application. It is an important security sense.
+                 ''',
+                  ["what data your application should accept?", "what its syntax should be and its minimum and maximum lengths?"]],
+                  # Concept 3
+                ["HTML Templates and Abstraction", "In this course, we use Jinja to create HTML templates. It is a tactic to create a template to help you to write repeated HTML code quicker.", ["curly brackets'{}' which states is all it takes to make your current template inherit a basic format from a parent template.", "'%' is used to insert python commands"]]]
 
 
 # Comment validation function
@@ -105,8 +112,8 @@ class MainPage(Handler):
         # reference_key = ndb.Key('Reference', 'reference_0')
         # print '[DEBUG]'
         # print 'reference_key:', reference_key
-        # reference_query = Reference.query(ancestor=reference_key)
-        # self.write(reference_query)
+        reference_query = Reference.query(Reference.title == 'reference_0').fetch()
+        self.write(reference_query)
         # reference_query.ancestor(Reference)
         
         
@@ -114,7 +121,7 @@ class MainPage(Handler):
         # self.response.out.write(form)
         # self.write_form()
         user_input = self.request.get('comment')
-        self.render('index.html', error='', comment=user_input, main_concept=Concept_list, display_comment=comments)
+        self.render('index.html', error='', comment=user_input, main_concept=Concept_list, display_comment=comments, reference_query=reference_query)
 
     def post(self):
         user_input = self.request.get('comment')

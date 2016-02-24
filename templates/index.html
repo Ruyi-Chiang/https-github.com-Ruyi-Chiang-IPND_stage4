@@ -20,6 +20,19 @@
         -->
         {% endfor %}
         </ul>
+
+
+        <!-- Display Comments-->
+        <div class="container lime accent-1">
+          <h5>This is the display area</h5>
+          <ol>
+            {% for reference in reference_query %}
+              <li>{{reference.title}} at {{reference.link}}</li>
+            {% endfor %}
+           </ol>
+        </div>
+        
+
         <form action="/postreference" method="post">
           <fieldset>
             <legend>Share with me your good pieces regarding to this topic</legend>
